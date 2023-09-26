@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TiendaZapatillas</string>
+    <string name="inserte_numero_de_pares">Inserte numero de pares</string>
+    <string name="calcular">calcular</string>
+    <string name="elegir_marca">Elegir Marca</string>
+    <string name="elegir_talla">Elegir talla</string>
+    <string name="numero_de_pares_vendidos">Numero de pares vendidos</string>
+    <string name="detalles_de_la_venta">Detalles de la venta</string>
+</resources>
