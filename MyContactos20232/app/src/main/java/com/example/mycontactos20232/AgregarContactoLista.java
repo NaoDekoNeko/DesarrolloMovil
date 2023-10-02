@@ -36,19 +36,19 @@ public class AgregarContactoLista extends AppCompatActivity {
                         Contacto c = new Contacto((int) id, nombre, alias, tipo);
                         MainActivity.miscontactos.add(c);
                         mensaje ="Contacto Agregado";
-                        Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
                         txtnombre.setText("");
                         txtalias.setText("");
                         Intent intent = new Intent(getApplicationContext(),ListarContacto.class);
                         startActivity(intent);
                     } else {
                         mensaje ="Error al agregar contacto";
-                        Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
                     mensaje ="Ingrese un nombre";
-                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
                 }
             }
         });

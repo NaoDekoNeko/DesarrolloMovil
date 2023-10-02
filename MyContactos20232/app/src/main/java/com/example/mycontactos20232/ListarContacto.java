@@ -67,7 +67,7 @@ public class ListarContacto extends AppCompatActivity {
                     myAdaptador.notifyDataSetChanged();  // Notificas al adaptador sobre los cambios en los datos
                 } else {
                     String mensaje ="Error al eliminar contacto";
-                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:

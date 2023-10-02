@@ -23,6 +23,7 @@ public class MyAdaptador extends BaseAdapter {
     public long getItemId(int position){return 0;}
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
+        String auxTipo;
         if (convertView == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.misfilas,null);
@@ -31,6 +32,7 @@ public class MyAdaptador extends BaseAdapter {
             viewHolder.txtminombre = convertView.findViewById(R.id.txtminombre);
             viewHolder.txtmialias = convertView.findViewById(R.id.txtmialias);
             viewHolder.imgImagen = convertView.findViewById(R.id.imgimagen);
+            viewHolder.txtTipo = convertView.findViewById(R.id.txtTipo);
 
             convertView.setTag(viewHolder);
         }
@@ -38,9 +40,25 @@ public class MyAdaptador extends BaseAdapter {
         ViewHolder holder = (ViewHolder) convertView.getTag();
         String nombre = MainActivity.miscontactos.get(position).getNombre();
         String alias = MainActivity.miscontactos.get(position).getAlias();
+        int tipo = MainActivity.miscontactos.get(position).getTipo();
         holder.txtminombre.setText(nombre);
         holder.txtmialias.setText(alias);
 
+        switch (tipo) {
+            case 1:
+                auxTipo = "Vendedor";
+                break;
+            case 0:
+                auxTipo = "Cliente";
+                break;
+            default:
+                auxTipo = "No definido";
+                break;
+        }
+
+        holder.txtTipo.setText(auxTipo);
+
+        holder.imgImagen.setImageResource(R.drawable.sample);
         return  convertView;
     }
 
@@ -48,5 +66,6 @@ public class MyAdaptador extends BaseAdapter {
         TextView txtminombre;
         TextView txtmialias;
         ImageView imgImagen;
+        TextView txtTipo;
     }
 }

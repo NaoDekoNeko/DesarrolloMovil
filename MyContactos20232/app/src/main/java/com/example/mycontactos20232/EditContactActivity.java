@@ -43,13 +43,13 @@ public class EditContactActivity extends AppCompatActivity {
                     c.setTipo(tipo);
 
                     String mensaje ="Contacto Actualizado";
-                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(getApplicationContext(),ListarContacto.class);
                     startActivity(intent);
                 } else {
                     String mensaje ="Error al actualizar contacto";
-                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),mensaje,Toast.LENGTH_SHORT).show();
                 }
             }
         });
