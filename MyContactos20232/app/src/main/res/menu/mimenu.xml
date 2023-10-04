@@ -6,4 +6,10 @@
     <item
         android:id="@+id/mnuirListarContacto"
         android:title="Ir Listar Contacto"/>
+    <item
+        android:id="@+id/mnuirListarContactoSQlite"
+        android:title="Ir Listar Contacto SQlite"/>
+    <item
+        android:id="@+id/mnuirListarWeb"
+        android:title="Ir Listar Contacto Web"/>
 </menu>

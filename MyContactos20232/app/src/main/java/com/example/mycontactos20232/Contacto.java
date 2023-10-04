@@ -5,12 +5,19 @@ public class Contacto {
     private String nombre;
     private String alias;
     private int tipo;
-    public Contacto(int idcontacto_,String nombre_,String alias_,int tipo_){
-        this.idcontacto = idcontacto_;
-        this.nombre = nombre_;
-        this.alias = alias_;
-        this.tipo = tipo_;
+    public Contacto(int idcontacto,String nombre,String alias,int tipo){
+        this.idcontacto = idcontacto;
+        this.nombre = nombre;
+        this.alias = alias;
+        this.tipo = tipo;
     }
+
+    public Contacto(String nombre, String alias, int tipo) {
+        this.nombre = nombre;
+        this.alias = alias;
+        this.tipo = tipo;
+    }
+
     public int getIdcontacto() {
         return idcontacto;
     }
