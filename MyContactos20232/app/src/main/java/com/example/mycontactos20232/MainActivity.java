@@ -11,13 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.mycontactos20232.db.DBHelper;
+import com.example.mycontactos20232.Cloud.ListarContactoWeb;
+import com.example.mycontactos20232.Lista.ListarContacto;
+import com.example.mycontactos20232.SQLite.ListarContactoSQLite;
+import com.example.mycontactos20232.SQLite.db.DBHelper;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static ArrayList<Contacto> miscontactosSQLite = new ArrayList<Contacto>();
     public static ArrayList<Contacto> miscontactos = new ArrayList<Contacto>();
+    public static ArrayList<Contacto> miscontactosweb = new ArrayList<Contacto>();
     public static int contador = 0;
     Button btniragregar,btnirlistar, btnirlistarweb, btnirlistarsql;
     public static DBHelper dbHelper;
@@ -28,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.mimenu,menu);
         dbHelper = new DBHelper(this);
         miscontactosSQLite = dbHelper.obtenerTodosLosContactos();
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent1);
             break;
             case R.id.mnuirListarContacto:
-                Intent intent = new Intent(getApplicationContext(),ListarContacto.class);
+                Intent intent = new Intent(getApplicationContext(), ListarContacto.class);
                 startActivity(intent);
                 break;
             case R.id.mnuirListarContactoSQlite:
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent2);
                 break;
             case R.id.mnuirListarWeb:
-                Intent intent3 = new Intent(getApplicationContext(), MainListarweb.class);
+                Intent intent3 = new Intent(getApplicationContext(), ListarContactoWeb.class);
                 startActivity(intent3);
                 break;
         }
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         btnirlistarweb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),MainListarweb.class);
+                Intent intent = new Intent(getApplicationContext(), ListarContactoWeb.class);
                 startActivity(intent);
             }
         });

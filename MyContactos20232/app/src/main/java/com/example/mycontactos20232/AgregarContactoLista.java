@@ -1,7 +1,5 @@
 package com.example.mycontactos20232;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,8 +8,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.mycontactos20232.API.ContactoAPI;
-import com.example.mycontactos20232.API.RetrofitContacto;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mycontactos20232.Cloud.API.ContactoAPI;
+import com.example.mycontactos20232.Cloud.API.RetrofitContacto;
+import com.example.mycontactos20232.Cloud.ListarContactoWeb;
+import com.example.mycontactos20232.Lista.ListarContacto;
+import com.example.mycontactos20232.SQLite.ListarContactoSQLite;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +55,7 @@ public class AgregarContactoLista extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),successfulmsg,Toast.LENGTH_SHORT).show();
                         txtnombre.setText("");
                         txtalias.setText("");
-                        intent = new Intent(getApplicationContext(),ListarContacto.class);
+                        intent = new Intent(getApplicationContext(), ListarContacto.class);
                         startActivity(intent);
                         break;
                     case 1:
@@ -65,7 +68,7 @@ public class AgregarContactoLista extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),successfulmsg,Toast.LENGTH_SHORT).show();
                                 txtnombre.setText("");
                                 txtalias.setText("");
-                                intent = new Intent(getApplicationContext(),ListarContactoSQLite.class);
+                                intent = new Intent(getApplicationContext(), ListarContactoSQLite.class);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(getApplicationContext(),failmsg,Toast.LENGTH_SHORT).show();
@@ -83,9 +86,9 @@ public class AgregarContactoLista extends AppCompatActivity {
                             @Override
                             public void onResponse(Call<Contacto> call, Response<Contacto> response) {
                                 if(!response.isSuccessful()){
-                                    Toast.makeText(AgregarContactoLista.this,successfulmsg,Toast.LENGTH_SHORT).show();
-                                }else{
                                     Toast.makeText(AgregarContactoLista.this,failmsg,Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(AgregarContactoLista.this,successfulmsg,Toast.LENGTH_SHORT).show();
                                 }
                             }
                             @Override
@@ -94,11 +97,10 @@ public class AgregarContactoLista extends AppCompatActivity {
                             }
                         });
 
-
                         Toast.makeText(getApplicationContext(),successfulmsg,Toast.LENGTH_LONG).show();
                         txtnombre.setText("");
                         txtalias.setText("");
-                        intent = new Intent(getApplicationContext(), MainListarweb.class);
+                        intent = new Intent(getApplicationContext(), ListarContactoWeb.class);
                         startActivity(intent);
                         break;
                     default:

@@ -1,4 +1,4 @@
-package com.example.mycontactos20232.db;
+package com.example.mycontactos20232.SQLite.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NOMBRE = "agenda.db";
-    public static final String TABLE_CONTACTOS = "t_contactos";
+    private static final int DATABASE_VERSION = 2;
+    private static final String DATABASE_NOMBRE = "nueva_agenda.db";
+    public static final String TABLE_CONTACTOS = "t_contactos_nuevo";
 
     public DBHelper(@Nullable Context context) {
         super(context, DATABASE_NOMBRE, null, DATABASE_VERSION);
@@ -32,8 +32,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTOS);
+        onCreate(sqLiteDatabase);
     }
 
     public int actualizarContacto(int id, String nombre, String alias, int tipo){

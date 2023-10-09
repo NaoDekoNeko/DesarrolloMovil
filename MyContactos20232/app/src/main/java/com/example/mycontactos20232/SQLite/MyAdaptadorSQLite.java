@@ -1,4 +1,4 @@
-package com.example.mycontactos20232;
+package com.example.mycontactos20232.SQLite;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.mycontactos20232.MainActivity;
+import com.example.mycontactos20232.R;
 
 public class MyAdaptadorSQLite extends BaseAdapter {
     Context context;
@@ -47,18 +50,19 @@ public class MyAdaptadorSQLite extends BaseAdapter {
         switch (tipo) {
             case 1:
                 auxTipo = "Vendedor";
+                holder.imgImagen.setImageResource(R.drawable.sample1);
                 break;
             case 0:
                 auxTipo = "Cliente";
+                holder.imgImagen.setImageResource(R.drawable.sample2);
                 break;
             default:
                 auxTipo = "No definido";
+                holder.imgImagen.setImageResource(R.drawable.sampledef);
                 break;
         }
 
         holder.txtTipo.setText(auxTipo);
-
-        holder.imgImagen.setImageResource(R.drawable.sample);
         return  convertView;
     }
 
