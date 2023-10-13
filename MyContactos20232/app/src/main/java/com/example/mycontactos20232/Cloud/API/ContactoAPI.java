@@ -14,7 +14,7 @@ public interface ContactoAPI {
     @GET("listarcontacto")
     Observable<List<Contacto>> getContacto();
     @POST("guardarcontacto")
-    Call<Contacto> setContacto(@Body Contacto contacto);
+    Call<Void> setContacto(@Body Contacto contacto);
 
     @POST("actualizarcontacto")
     Call<Void> updateContacto(@Body Contacto contacto);

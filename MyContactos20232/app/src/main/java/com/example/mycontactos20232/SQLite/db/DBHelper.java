@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NOMBRE = "nueva_agenda.db";
     public static final String TABLE_CONTACTOS = "t_contactos_nuevo";
 
@@ -28,7 +28,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nombre TEXT NOT NULL," +
                 "alias TEXT," +
-                "tipo INT CHECK (tipo IN (0,1)))");
+                "tipo INT CHECK (tipo IN (0,1)))"
+        );
     }
 
     @Override

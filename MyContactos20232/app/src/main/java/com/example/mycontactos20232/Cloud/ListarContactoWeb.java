@@ -1,7 +1,10 @@
 package com.example.mycontactos20232.Cloud;
 
+import static com.example.mycontactos20232.MainActivity.codigo;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -53,7 +56,8 @@ public class ListarContactoWeb extends AppCompatActivity {
                 String nombre = c.getNombre();
                 String alias = c.getAlias();
                 int id = c.getIdcontacto();
-                String mensaje = "Nombre:" + nombre + " Alias:" + alias + " id:" + id;
+                String codigo = c.getCodigo();
+                String mensaje = "Nombre:" + nombre + " Alias:" + alias + " id:" + id + " codigo: " + codigo;
                 Toast.makeText(getApplicationContext(), mensaje, Toast.LENGTH_SHORT).show();
             }
         });
@@ -97,35 +101,47 @@ public class ListarContactoWeb extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Contacto aux = MainActivity.miscontactosweb.get(info.position);
+        String msgPriv = "Solo el telefono que agregó el contacto puede realizar cambios";
         switch (item.getItemId()) {
             case R.id.edit:
-                Intent intentEdit = new Intent(getApplicationContext(), EditContactActivity.class);
-                intentEdit.putExtra("contact_position", info.position);  // Pasas la posición como un extra al Intent
-                intentEdit.putExtra("save_type", 2);
-                startActivity(intentEdit);
+                if(codigo.equals(aux.getCodigo())) {
+                    Intent intentEdit = new Intent(getApplicationContext(), EditContactActivity.class);
+                    intentEdit.putExtra("contact_position", info.position);  // Pasas la posición como un extra al Intent
+                    intentEdit.putExtra("save_type", 2);
+                    startActivity(intentEdit);
+                }
+                else{
+                    Toast.makeText(ListarContactoWeb.this, msgPriv, Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.delete:
-                Contacto aux = MainActivity.miscontactosweb.get(info.position);
-                ContactoAPI contactoAPI = RetrofitContacto.getInstance().create(ContactoAPI.class);
-                Call<Void> deletecall = contactoAPI.deleteContacto(aux);
+                if(codigo.equals(aux.getCodigo())) {
+                    ContactoAPI contactoAPI = RetrofitContacto.getInstance().create(ContactoAPI.class);
+                    Call<Void> deletecall = contactoAPI.deleteContacto(aux);
 
-                String successfulmsg ="Contacto Actualizado", failmsg ="Error al actualizar contacto";
-                deletecall.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if(response.isSuccessful()){
-                            Toast.makeText(ListarContactoWeb.this,successfulmsg,Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(ListarContactoWeb.this,failmsg,Toast.LENGTH_SHORT).show();
+                    String successfulmsg = "Contacto Actualizado", failmsg = "Error al actualizar contacto";
+                    deletecall.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(ListarContactoWeb.this, successfulmsg, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ListarContactoWeb.this, failmsg, Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(ListarContactoWeb.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
-                });
-                MainActivity.miscontactosweb.remove(aux);
-                myAdaptadorWeb.notifyDataSetChanged();
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(ListarContactoWeb.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    MainActivity.miscontactosweb.remove(aux);
+                    myAdaptadorWeb.notifyDataSetChanged();
+                }
+                else{
+                    Toast.makeText(ListarContactoWeb.this, msgPriv, Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onContextItemSelected(item);

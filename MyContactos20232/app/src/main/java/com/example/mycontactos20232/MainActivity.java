@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static int contador = 0;
     Button btniragregar,btnirlistar, btnirlistarweb, btnirlistarsql;
     public static DBHelper dbHelper;
+    public static String codigo;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.mimenu,menu);
         dbHelper = new DBHelper(this);
         miscontactosSQLite = dbHelper.obtenerTodosLosContactos();
+        codigo = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         return super.onCreateOptionsMenu(menu);
     }
 
