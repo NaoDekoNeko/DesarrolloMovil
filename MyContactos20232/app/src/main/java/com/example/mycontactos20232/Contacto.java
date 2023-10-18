@@ -25,10 +25,6 @@ public class Contacto {
         return idcontacto;
     }
 
-    public void setIdcontacto(int idcontacto) {
-        this.idcontacto = idcontacto;
-    }
-
     public String getNombre() {
         return nombre;
     }
