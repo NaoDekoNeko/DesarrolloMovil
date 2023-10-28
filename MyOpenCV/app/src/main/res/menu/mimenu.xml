@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/original" android:id="@+id/menuoriginal" />
+    <item android:title="@string/gris" android:id="@+id/menugris"/>
+    <item android:title="@string/inverso_gris" android:id="@+id/menuinversogris"/>
+    <item android:title="@string/bordes" android:id="@+id/menubordes"/>
+    <item android:title="@string/radiografia" android:id="@+id/menuradiografia"/>
+    <item android:title="@string/inverso_color" android:id="@+id/inverso_color"/>
+    <item android:title="@string/canal_r" android:id="@+id/canal_r" />
+    <item android:title="@string/canal_g" android:id="@+id/canal_g" />
+    <item android:title="@string/canal_b" android:id="@+id/canal_b" />
+    <item android:title="@string/resaltar_piel" android:id="@+id/resaltar_piel" />
+    <item android:title="@string/resaltar_hoja" android:id="@+id/resaltar_hoja" />
+</menu>
