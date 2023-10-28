@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MyOpenCV</string>
+    <string name="bordes">bordes</string>
+    <string name="radiografia">radiografia</string>
+    <string name="inverso_gris">inverso Gris</string>
+    <string name="gris">Gris</string>
+    <string name="original">Original</string>
+    <string name="inverso_color">inverso_color</string>
+    <string name="canal_r">canal_r</string>
+    <string name="canal_g">canal_g</string>
+    <string name="canal_b">canal_b</string>
+    <string name="resaltar_piel">resaltar_piel</string>
+    <string name="resaltar_hoja">resaltar_hoja</string>
+    <string name="encontrar_textura">encontrar_textura</string>
+</resources>
