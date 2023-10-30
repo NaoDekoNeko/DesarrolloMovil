@@ -1,7 +1,9 @@
 package com.example.myopencv;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -17,12 +19,19 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.opencv.objdetect.CascadeClassifier;
+
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -34,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private Mat mat1;
     private int menu_option = 0; //Creamos un menu para el tipo de tonalidad que queremos en ese momento
     private int mCameraId=0;
+    private CascadeClassifier faceCascade;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
         ImageView flip_camera = findViewById(R.id.flip_camera);
         flip_camera.setOnClickListener(v -> swapCamera());
+
+        faceCascade = new CascadeClassifier();
+        faceCascade.load(getCascadeFile(R.raw.haarcascade_frontalface_alt2).getAbsolutePath());
     }
 
     private void swapCamera() {
@@ -151,11 +165,25 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 // Implementa la lógica para resaltar una hoja en la imagen
                 mat1 = highlightLeafColor(originalFrame);
                 break;
+            case 11: // Nueva opción para remarcar rostros
+                detectAndDrawFaces(originalFrame);
+                mat1 = originalFrame; // Actualiza mat1 con la imagen que tiene los rostros resaltados
+                break;
+
             default:
                 break;
         }
         Imgproc.putText(mat1,"UNI",new Point(0,mat1.height()-20),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,0,0),2);
         return mat1;
+    }
+
+    private void detectAndDrawFaces(Mat frame) {
+        MatOfRect faces = new MatOfRect();
+        faceCascade.detectMultiScale(frame, faces);
+        Rect[] facesArray = faces.toArray();
+        for (Rect faceRect : facesArray) {
+            Imgproc.rectangle(frame, faceRect.tl(), faceRect.br(), new Scalar(255, 0, 0), 2);
+        }
     }
 
     private Mat applyBorders(Mat inputFrame) {
@@ -211,22 +239,22 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     private Mat highlightSkinColor(Mat inputFrame) {
-        Mat hsv = new Mat();
-        Imgproc.cvtColor(inputFrame,hsv, Imgproc.COLOR_BGR2HSV);
+        
+        Mat skinFrame = new Mat();
+        // Convertir la imagen de RGBA a BGR
+        Imgproc.cvtColor(inputFrame, skinFrame, Imgproc.COLOR_RGBA2BGR);
 
-        List<Mat> hsvPlanes = new ArrayList<>();
-        Core.split(hsv, hsvPlanes);
+        // Convertir la imagen de BGR a HSV
+        Imgproc.cvtColor(skinFrame, skinFrame, Imgproc.COLOR_BGR2HSV);
 
-        Mat min_sat = new Mat();
-        Imgproc.threshold(hsvPlanes.get(1), min_sat, 40,255, Imgproc.THRESH_BINARY);
+        // Definir el rango de valores de tono y saturación para el color de piel
+        Scalar lowerBound = new Scalar(0, 20, 70);  // Valores mínimos de tono, saturación y valor para el color de piel
+        Scalar upperBound = new Scalar(30, 150, 255);  // Valores máximos de tono, saturación y valor para el color de piel
 
-        Mat max_hue = new Mat();
-        Imgproc.threshold(hsvPlanes.get(0), max_hue, 15, 255, Imgproc.THRESH_BINARY_INV);
+        // Crear una máscara que resalte los píxeles de color piel
+        Core.inRange(skinFrame, lowerBound, upperBound, skinFrame);
 
-        Mat skinHighlight = new Mat();
-        Core.bitwise_and(min_sat,max_hue,skinHighlight);
-
-        return skinHighlight;
+        return skinFrame;
     }
 
     private Mat highlightLeafColor(Mat inputFrame) {
@@ -274,9 +302,34 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 menu_option = 9;break;
             case R.id.resaltar_hoja:
                 menu_option = 10;break;
+            case R.id.remarcar_rostro:
+                menu_option = 11;break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private File getCascadeFile(int resId) {
+        try {
+            InputStream is = getResources().openRawResource(resId);
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
+
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+            return mCascadeFile;
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error loading cascade", e);
+            return null;
+        }
     }
 }
