@@ -3,7 +3,6 @@ package com.example.myopencv;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -23,6 +22,7 @@ import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
@@ -30,22 +30,22 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.opencv.objdetect.CascadeClassifier;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
-
     // Creamos los atributos para estas clases
     CameraBridgeViewBase cameraBridgeViewBase;
     BaseLoaderCallback baseLoaderCallback;
-    // Creamos una variable tipo pixe (matriz)
+    // Creamos una variable tipo pixel (matriz)
     private Mat mRGB;
     private Mat mat1;
     private int menu_option = 0; //Creamos un menu para el tipo de tonalidad que queremos en ese momento
     private int mCameraId=0;
     private CascadeClassifier faceCascade;
-
-
+    private CascadeClassifier faceDetector, narizDetector;
+    private float symmetryValue = 0.0f;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         ImageView flip_camera = findViewById(R.id.flip_camera);
         flip_camera.setOnClickListener(v -> swapCamera());
 
-        faceCascade = new CascadeClassifier();
-        faceCascade.load(getCascadeFile(R.raw.haarcascade_frontalface_alt2).getAbsolutePath());
+        cargarDependencias();
     }
 
     private void swapCamera() {
@@ -169,12 +168,101 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 detectAndDrawFaces(originalFrame);
                 mat1 = originalFrame; // Actualiza mat1 con la imagen que tiene los rostros resaltados
                 break;
-
+            case 12:
+                mat1 = symmetry(inputFrame);
+                displaySymmetryValue(originalFrame);
+                break;
             default:
                 break;
         }
-        Imgproc.putText(mat1,"UNI",new Point(0,mat1.height()-20),Core.FONT_HERSHEY_SIMPLEX,1,new Scalar(255,0,0),2);
+
         return mat1;
+    }
+
+    private void displaySymmetryValue(Mat frame) {
+        int centerX = frame.width() / 24;
+        int centerY = frame.height() / 24;
+        Size textSize = Imgproc.getTextSize("NIVEL DE SIMETRIA: " + symmetryValue, Core.FONT_HERSHEY_SIMPLEX, 1, 1, null);
+        int textX = centerX - (int) (textSize.width / 2);
+        int textY = centerY + (int) (textSize.height / 2);
+        Imgproc.putText(frame, "NIVEL DE SIMETRIA: " + symmetryValue, new Point(textX, textY), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
+    }
+    private Mat symmetry(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        float ojo1x = 0;
+        float ojo2x = 1;
+        float ojo1y = 0;
+        float ojo2y = 1;
+        float narizx = 0;
+        float narizy = 1;
+        MatOfRect rostros = new MatOfRect();
+        Rect[] facesArray;
+        Mat mat0 = inputFrame.rgba();
+        Mat mat2 = inputFrame.gray();
+        Imgproc.equalizeHist(mat2,mat2);
+        faceDetector.detectMultiScale(mat2,rostros,1.3,2,0|2,new Size(30,30),new Size(mat0.width(),mat0.height()));
+        facesArray = rostros.toArray();
+
+        MatOfRect nariz = new MatOfRect();
+        Rect[] narizArray;
+        narizDetector.detectMultiScale(mat2,nariz,1.3,2,0|2,new Size(30,30),new Size(mat0.width(),mat0.height()));
+        narizArray = nariz.toArray();
+        // num de caras
+
+        for( int i=0;i<facesArray.length;i++){
+            int x = facesArray[i].x;
+            int y = facesArray[i].y;
+            int width = facesArray[i].width;
+            int height = facesArray[i].height;
+            Point center = new Point((x+width*0.5),(y+height*0.5));
+            Imgproc.rectangle(mat0,
+                    new Point(x,y),
+                    new Point(x+width,y+height),
+                    new Scalar(123,213,23,220)
+            );
+            if(i%2==0){
+                ojo1x = (float) ((float)x+width*0.5);
+                ojo1y = (float) ((float)y+height*0.5);
+            }else{
+                ojo2x = (float) ((float)x+width*0.5);
+                ojo2y = (float) ((float)y+height*0.5);
+            }
+            Imgproc.putText(mat0,"OJO: "+(i+1),new Point(x,y-20),1,1,new Scalar(255,255,255));
+
+        }
+        for( int i=0;i<narizArray.length;i++){
+            int x = narizArray[i].x;
+            int y = narizArray[i].y;
+            int width = narizArray[i].width;
+            int height = narizArray[i].height;
+            Point center = new Point((x+width*0.5),(y+height*0.5));
+            Imgproc.rectangle(mat0,
+                    new Point(x,y),
+                    new Point(x+width,y+height),
+                    new Scalar(123,213,23,220)
+            );
+            narizx = (float) ((float)x+width*0.5);
+            narizy = (float) ((float)y+height*0.5);
+            Imgproc.putText(mat0,"NARIZ: "+(i+1),new Point(x,y-20),1,1,new Scalar(255,255,255));
+
+        }
+        float d1 = (ojo1x - narizx)*(ojo1x - narizx) + (ojo1y-narizy)*(ojo1y-narizy);
+        float d2 = (ojo2x - narizx)*(ojo2x - narizx) + (ojo2y-narizy)*(ojo2y-narizy);
+        symmetryValue = (d1-d2)/1000;
+        if(symmetryValue<0){
+            symmetryValue = symmetryValue*(-1);
+        }
+
+        if(symmetryValue>100){
+            symmetryValue = 100;
+        }
+
+        symmetryValue = 100 - symmetryValue;
+
+        if(symmetryValue == 100){
+            symmetryValue = 0;
+        }
+
+        return mat0;
     }
 
     private void detectAndDrawFaces(Mat frame) {
@@ -304,32 +392,58 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 menu_option = 10;break;
             case R.id.remarcar_rostro:
                 menu_option = 11;break;
+            case R.id.simetria:
+                menu_option = 12;break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private File getCascadeFile(int resId) {
+    private void cargarDependencias() {
         try {
-            InputStream is = getResources().openRawResource(resId);
+            InputStream is2 = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+            File cascadeDir2 = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile2 = new File(cascadeDir2, "haarcascade_frontalface_alt2.xml");
+            FileOutputStream os2 = new FileOutputStream(mCascadeFile2);
+            byte[] buffer2 = new byte[4096];
+            int bytesRead2;
+            while ((bytesRead2 = is2.read(buffer2)) != -1) {
+                os2.write(buffer2, 0, bytesRead2);
+            }
+            is2.close();
+            os2.close();
+
+            faceCascade = new CascadeClassifier(mCascadeFile2.getAbsolutePath());
+
+            InputStream is = getResources().openRawResource(R.raw.haarcascade_eye_tree_eyeglasses);
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-            File mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
-
+            File mCascadeFile = new File(cascadeDir,"haarcascade_eye_tree_eyeglasses.xml");
             FileOutputStream os = new FileOutputStream(mCascadeFile);
-
             byte[] buffer = new byte[4096];
             int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
+            while ((bytesRead=is.read(buffer))!=-1){
+                os.write(buffer,0,bytesRead);
             }
             is.close();
             os.close();
+            faceDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
 
-            return mCascadeFile;
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error loading cascade", e);
-            return null;
+            InputStream is1 = getResources().openRawResource(R.raw.haarcascade_mcs_nose);
+            File cascadeDir1 = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile1 = new File(cascadeDir1,"haarcascade_mcs_nose.xml");
+            FileOutputStream os1 = new FileOutputStream(mCascadeFile1);
+            byte[] buffer1 = new byte[4096];
+            int bytesRead1;
+            while ((bytesRead1=is1.read(buffer1))!=-1){
+                os1.write(buffer1,0,bytesRead1);
+            }
+            is1.close();
+            os1.close();
+            narizDetector = new CascadeClassifier(mCascadeFile1.getAbsolutePath());
+
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(),"Error Haar",Toast.LENGTH_LONG).show();
         }
     }
 }

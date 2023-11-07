@@ -12,4 +12,6 @@
     <item android:title="@string/resaltar_piel" android:id="@+id/resaltar_piel" />
     <item android:title="@string/resaltar_hoja" android:id="@+id/resaltar_hoja" />
     <item android:title="@string/remarca_rostro" android:id="@+id/remarcar_rostro" />
+    <item android:title="@string/simetria" android:id="@+id/simetria" />
+    <!--    -->
 </menu>
